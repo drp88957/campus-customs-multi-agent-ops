@@ -1,6 +1,7 @@
 """Read-only MCP tools for the open Campus Customs tickets."""
 
 from contextlib import closing
+import os
 from pathlib import Path
 import sqlite3
 from typing import Any
@@ -8,7 +9,9 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 
 
-DATABASE_PATH = Path(__file__).resolve().parent.parent / "data" / "campus_customs_new.db"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+STATE_DIR = Path(os.environ.get("CAMPUS_CUSTOMS_STATE_DIR", PROJECT_ROOT / "data")).resolve()
+DATABASE_PATH = STATE_DIR / "campus_customs_new.db"
 mcp = FastMCP("Campus Customs")
 
 

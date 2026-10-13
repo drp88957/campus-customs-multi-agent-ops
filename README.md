@@ -73,6 +73,16 @@ The route restores `data/campus_customs_new.db` from `data/campus_customs.db`, r
 
 Then run tickets 101, 102, and 103 from the board. Agents prepare payment requests only; a person must approve each payment in the dashboard. The board does not send messages to customers or contact vendors.
 
+## Container deployment
+
+The app can run as one Docker service: FastAPI serves the built React dashboard and API on the same origin. Set `PORTKEY_API_KEY`, `CAMPUS_CUSTOMS_ACCESS_USERNAME`, and a strong `CAMPUS_CUSTOMS_ACCESS_PASSWORD` in `.env`, then build and start it with a persistent state volume:
+
+```powershell
+docker compose up --build
+```
+
+The Compose file mounts `campus-customs-state` at `/var/lib/campus-customs`. On first start, an empty state volume is initialized from the clean original database. Keep that volume attached across deploys so ticket resolutions, payment records, cash, and the append-only audit log persist. A hosting provider should expose the container port from its `PORT` environment variable and store all three credentials as private service secrets. The dashboard asks for the access username and password; the backend protects its read, run, approval, and reset APIs. Put only placeholders in `.env.example`; never put real credentials in the Dockerfile, source, or repository. Serve the container over HTTPS.
+
 ## Submission artifacts
 
 `output/` contains the table/tool/agent/API harness, ticket plans and reflections, design notes, smoke-call evidence, resolved ticket outcomes, the append-only audit trail, and the self-contained resolved board screenshot page. Screenshots also have PNG source copies in `output/board_screenshots/`. After publishing, `output/github_url.txt` records this repository's public URL.

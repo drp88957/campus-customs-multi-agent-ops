@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+let dashboardAuthorization: string | null = null
+
+function makeBasicAuthorization(username: string, password: string) {
+  const bytes = new TextEncoder().encode(`${username}:${password}`)
+  let binary = ''
+  for (const byte of bytes) binary += String.fromCharCode(byte)
+  return `Basic ${window.btoa(binary)}`
+}
 
 type Ticket = {
   id: number
@@ -115,10 +123,32 @@ function relativeTime(value?: string) {
 }
 
 async function readJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, init)
+  const headers = new Headers(init?.headers)
+  if (dashboardAuthorization) headers.set('Authorization', dashboardAuthorization)
+  const response = await fetch(url, { ...init, headers })
   const data = await response.json().catch(() => ({}))
+  if (response.status === 401) window.dispatchEvent(new Event('cc-auth-required'))
   if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : `Request failed (${response.status})`)
   return data as T
+}
+
+function AccessGate({ onUnlock }: { onUnlock: (username: string, password: string) => void }) {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  return (
+    <div className="access-backdrop">
+      <form className="access-card" onSubmit={(event) => { event.preventDefault(); onUnlock(username, password) }}>
+        <span className="section-kicker">CAMPUS CUSTOMS / PRIVATE DESK</span>
+        <h2>Sign in to the operations desk</h2>
+        <p>This deployment is access controlled. Use the credentials shared by the desk owner.</p>
+        <label className="field-label" htmlFor="desk-user">Username</label>
+        <input id="desk-user" autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required />
+        <label className="field-label" htmlFor="desk-password">Password</label>
+        <input id="desk-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+        <button className="run-button" type="submit">Open the desk <Icon name="arrow" size={16} /></button>
+      </form>
+    </div>
+  )
 }
 
 function ApprovalCard({
@@ -237,6 +267,13 @@ export default function App() {
   const [connectionError, setConnectionError] = useState('')
   const [toast, setToast] = useState('')
   const [lastRefresh, setLastRefresh] = useState(Date.now())
+  const [authRequired, setAuthRequired] = useState(false)
+
+  useEffect(() => {
+    const requestSignIn = () => setAuthRequired(true)
+    window.addEventListener('cc-auth-required', requestSignIn)
+    return () => window.removeEventListener('cc-auth-required', requestSignIn)
+  }, [])
 
   const refresh = useCallback(async () => {
     try {
@@ -259,6 +296,12 @@ export default function App() {
       setLoading(false)
     }
   }, [])
+
+  function unlockDesk(username: string, password: string) {
+    dashboardAuthorization = makeBasicAuthorization(username, password)
+    setAuthRequired(false)
+    void refresh()
+  }
 
   useEffect(() => {
     void refresh()
@@ -343,6 +386,8 @@ export default function App() {
   const orderedEvents = [...ticketEvents].sort((a, b) => new Date(b.logged_at ?? 0).getTime() - new Date(a.logged_at ?? 0).getTime())
 
   return (
+    <>
+    {authRequired && <AccessGate onUnlock={unlockDesk} />}
     <div className="app-shell">
       <aside className="rail">
         <div className="brand-lockup">
@@ -508,5 +553,6 @@ export default function App() {
         <footer className="desk-footer"><span><i /> CONNECTED TO THE WORKING DESK</span><span>FACTS FROM THE SHOP DATABASE <b>·</b> HUMAN DECISIONS STAY HUMAN</span></footer>
       </main>
     </div>
+    </>
   )
 }

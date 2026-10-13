@@ -2,18 +2,24 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 from contextlib import asynccontextmanager, closing
 from decimal import Decimal
 import json
 import logging
+import os
 from pathlib import Path
+import secrets
 import sqlite3
 import sys
 from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from fastapi.staticfiles import StaticFiles
 
 # Support both `uvicorn backend.main:app` from the project root and the
 # assignment's `uvicorn main:app` command from the backend directory.
@@ -32,9 +38,15 @@ else:
 
 logger = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATABASE_PATH = PROJECT_ROOT / "data" / "campus_customs_new.db"
+STATE_DIR = Path(os.environ.get("CAMPUS_CUSTOMS_STATE_DIR", PROJECT_ROOT / "data")).resolve()
+DATABASE_PATH = STATE_DIR / "campus_customs_new.db"
 ORIGINAL_DATABASE_PATH = PROJECT_ROOT / "data" / "campus_customs.db"
-AUDIT_PATH = PROJECT_ROOT / "output" / "audit_trail.jsonl"
+AUDIT_PATH = Path(
+    os.environ.get(
+        "CAMPUS_CUSTOMS_AUDIT_PATH",
+        PROJECT_ROOT / "output" / "audit_trail.jsonl",
+    )
+).resolve()
 audit_trail = AuditTrail(AUDIT_PATH)
 
 
@@ -61,6 +73,18 @@ def _connect(*, read_only: bool = False) -> sqlite3.Connection:
     return sqlite3.connect(DATABASE_PATH, timeout=10)
 
 
+def _initialize_working_copy() -> None:
+    """Seed a new runtime state directory from the clean original database."""
+    if DATABASE_PATH.is_file():
+        return
+    if not ORIGINAL_DATABASE_PATH.is_file():
+        raise RuntimeError("The original Campus Customs database was not found.")
+    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with closing(sqlite3.connect(ORIGINAL_DATABASE_PATH, timeout=10)) as source:
+        with closing(sqlite3.connect(DATABASE_PATH, timeout=10)) as destination:
+            source.backup(destination)
+
+
 def _ensure_support_schema(connection: sqlite3.Connection) -> None:
     """Keep human-approved purchase details in the working DB only."""
     connection.execute("PRAGMA foreign_keys = ON")
@@ -85,6 +109,7 @@ def _ensure_support_schema(connection: sqlite3.Connection) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    _initialize_working_copy()
     with closing(_connect()) as connection:
         _ensure_support_schema(connection)
     team = AgentTeam.from_environment()
@@ -110,8 +135,49 @@ app.add_middleware(
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "Authorization"],
 )
+
+
+@app.middleware("http")
+async def protect_deployed_api(request: Request, call_next):
+    """Require shared Basic credentials for data and write APIs when configured."""
+    path = request.url.path
+    api_request = (
+        path == "/tickets"
+        or path.startswith("/tickets/")
+        or path in {"/events", "/cash", "/vendors", "/approvals", "/reset"}
+    )
+    if not api_request:
+        return await call_next(request)
+
+    expected_user = os.getenv("CAMPUS_CUSTOMS_ACCESS_USERNAME", "")
+    expected_password = os.getenv("CAMPUS_CUSTOMS_ACCESS_PASSWORD", "")
+    if not expected_user and not expected_password:
+        return await call_next(request)
+    if not expected_user or not expected_password:
+        return JSONResponse({"detail": "Deployment access is not configured."}, status_code=503)
+
+    authorization = request.headers.get("authorization", "")
+    try:
+        scheme, encoded = authorization.split(" ", 1)
+        if scheme.lower() != "basic":
+            raise ValueError("Unsupported authorization scheme")
+        decoded = base64.b64decode(encoded, validate=True).decode("utf-8")
+        supplied_user, supplied_password = decoded.split(":", 1)
+        valid = secrets.compare_digest(supplied_user, expected_user) and secrets.compare_digest(
+            supplied_password, expected_password
+        )
+    except (ValueError, UnicodeDecodeError, binascii.Error):
+        valid = False
+
+    if not valid:
+        return JSONResponse(
+            {"detail": "Sign in to use the operations desk."},
+            status_code=401,
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return await call_next(request)
 
 
 @app.get("/health")
@@ -595,3 +661,8 @@ async def reset_database(command: ResetCommand) -> dict[str, Any]:
         "checking": dict(row) if row is not None else None,
         "audit_trail_preserved": True,
     }
+
+
+FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

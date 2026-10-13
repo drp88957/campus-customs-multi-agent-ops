@@ -1,6 +1,6 @@
 # Campus Customs MCP server
 
-The FastMCP server is the only shop-data interface for the agent team. It reads the working copy at `data/campus_customs_new.db` relative to the `hw5` project folder. All current tools are read-only; the team produces recommendations, approval requests, and drafts without changing records.
+The FastMCP server is the only shop-data interface for the agent team. By default it reads `data/campus_customs_new.db` relative to the `hw5` project folder. A deployment can set `CAMPUS_CUSTOMS_STATE_DIR` to a mounted persistent directory; both the backend and MCP server then use the working database there. All current tools are read-only; the team produces recommendations, approval requests, and drafts without changing records.
 
 ## Setup and launch
 

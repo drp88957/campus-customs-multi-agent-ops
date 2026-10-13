@@ -1,0 +1,17 @@
+services:
+  campus-customs:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: "8000"
+      PORTKEY_API_KEY: "${PORTKEY_API_KEY:?Set PORTKEY_API_KEY in the root .env file}"
+      CAMPUS_CUSTOMS_ACCESS_USERNAME: "${CAMPUS_CUSTOMS_ACCESS_USERNAME:?Set CAMPUS_CUSTOMS_ACCESS_USERNAME in the root .env file}"
+      CAMPUS_CUSTOMS_ACCESS_PASSWORD: "${CAMPUS_CUSTOMS_ACCESS_PASSWORD:?Set CAMPUS_CUSTOMS_ACCESS_PASSWORD in the root .env file}"
+      CAMPUS_CUSTOMS_STATE_DIR: /var/lib/campus-customs
+      CAMPUS_CUSTOMS_AUDIT_PATH: /var/lib/campus-customs/audit_trail.jsonl
+    volumes:
+      - campus-customs-state:/var/lib/campus-customs
+
+volumes:
+  campus-customs-state:

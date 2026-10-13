@@ -27,7 +27,12 @@ from .models import AgentRole, AgentWorkReport, TicketRunResult
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 MCP_SERVER_SCRIPT = PROJECT_ROOT / "mcp_server" / "server.py"
-AUDIT_PATH = PROJECT_ROOT / "output" / "audit_trail.jsonl"
+AUDIT_PATH = Path(
+    os.environ.get(
+        "CAMPUS_CUSTOMS_AUDIT_PATH",
+        PROJECT_ROOT / "output" / "audit_trail.jsonl",
+    )
+).resolve()
 MODEL_NAME = "gpt-6-luna"
 PORTKEY_BASE_URL = "https://api.portkey.ai/v1"
 

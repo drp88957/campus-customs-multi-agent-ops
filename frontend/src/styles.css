@@ -351,3 +351,9 @@ h1, h2, h3, p { margin-top: 0; }
   .run-card { gap: 8px; }
   .run-button { width: 100%; }
 }
+.access-backdrop{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:rgba(13,11,16,.84);backdrop-filter:blur(12px)}
+.access-card{width:min(440px,100%);display:grid;gap:11px;padding:28px;border:1px solid #493140;border-radius:20px;background:linear-gradient(150deg,#241c25,#17151a 72%);box-shadow:0 28px 90px #000b}
+.access-card h2{margin:2px 0;font-size:1.55rem;line-height:1.2}
+.access-card p{margin:0 0 8px;color:#b6aebb;font-size:.92rem}
+.access-card input{width:100%;border:1px solid #39323e;border-radius:10px;padding:11px 12px;background:#131116;color:#f5f0f6;font:inherit;outline:none}
+.access-card input:focus{border-color:#ff75b5;box-shadow:0 0 0 3px #ff75b526}
