@@ -13,6 +13,8 @@ ENV PYTHONUNBUFFERED=1 \
     CAMPUS_CUSTOMS_STATE_DIR=/var/lib/campus-customs \
     CAMPUS_CUSTOMS_AUDIT_PATH=/var/lib/campus-customs/audit_trail.jsonl
 COPY requirements.txt ./requirements.txt
+COPY backend/requirements.txt ./backend/requirements.txt
+COPY mcp_server/requirements.txt ./mcp_server/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./backend/
 COPY mcp_server/ ./mcp_server/
