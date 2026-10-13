@@ -1,0 +1,215 @@
+{
+  "run_date": "2026-08-31",
+  "model": "gpt-6-luna",
+  "database": "data/campus_customs_new.db",
+  "cash_reconciliation": {
+    "starting_checking": 3400.0,
+    "approved_outflows": 3240.0,
+    "ending_checking": 160.0,
+    "ending_balance_matches_database": true
+  },
+  "tickets": [
+    {
+      "id": 101,
+      "final_status": "resolved",
+      "agent_run_status": "human_approval_required",
+      "run_id": "cd9152c3-da94-4ddf-a41c-8e720c0731b8",
+      "short_outcome": "Invoice 501 for $840 was paid, clearing its recorded open-invoice block. The order remains unfulfilled: Bulldog Print Co's exact fit for CC-TEE-WHITE size S was not verified and no purchase or inventory receipt was recorded.",
+      "agent_contributions": [
+        {
+          "role": "boss",
+          "delegated_by": null,
+          "delegated_to": [
+            "inventory",
+            "accounting",
+            "customer_service"
+          ],
+          "summary": "Checked the open board, assigned three focused reviews, and reconciled their findings into an approval request and unsent customer draft.",
+          "mcp_tools": [
+            "list_open_tickets"
+          ],
+          "agent_tools": [
+            "delegate_to_agent"
+          ]
+        },
+        {
+          "role": "inventory",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Confirmed one requested white tee size S, zero in stock, a shortfall of one, a broad apparel-reprint specialty, five-day lead time, and an open linked vendor invoice; exact SKU fit remained unverified.",
+          "mcp_tools": [
+            "get_customer_order_context"
+          ],
+          "agent_tools": []
+        },
+        {
+          "role": "accounting",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Found invoice 501 for $840 open and overdue, no prior payments, and $3,400 checking; prepared a human approval request for the recorded amount.",
+          "mcp_tools": [
+            "get_accounting_context"
+          ],
+          "agent_tools": []
+        },
+        {
+          "role": "customer_service",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Drafted an unsent update that explains the stockout and avoids promising vendor fit, shipment, or an arrival date.",
+          "mcp_tools": [
+            "get_customer_order_context"
+          ],
+          "agent_tools": []
+        }
+      ],
+      "human_approvals": [
+        {
+          "kind": "invoice_payment",
+          "reference": "invoices.id=501",
+          "amount": 840.0,
+          "approved_by": "Deep",
+          "paid_at": "2026-08-31",
+          "balance_before": 3400.0,
+          "balance_after": 2560.0
+        }
+      ],
+      "cash_change": {
+        "amount": -840.0,
+        "reason": "Human-approved payment of overdue invoice 501",
+        "balance_before": 3400.0,
+        "balance_after": 2560.0
+      },
+      "remaining_review": "Confirm exact vendor fit and availability, then separately arrange fulfillment. The customer draft remains unsent."
+    },
+    {
+      "id": 102,
+      "final_status": "resolved",
+      "agent_run_status": "human_approval_required",
+      "run_id": "235d39a6-0c9a-48b1-9008-04897c00b2ed",
+      "short_outcome": "The lease records $2,400 rent due 2026-09-02, two days after the shop date. Deep approved payment on 2026-08-31 and the payment was recorded.",
+      "agent_contributions": [
+        {
+          "role": "boss",
+          "delegated_by": null,
+          "delegated_to": [
+            "facilities"
+          ],
+          "summary": "Checked the open board and routed the rent notice to Facilities; did not delegate to Accounting.",
+          "mcp_tools": [
+            "list_open_tickets"
+          ],
+          "agent_tools": [
+            "delegate_to_agent"
+          ]
+        },
+        {
+          "role": "facilities",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Verified lease 1, the Chapel Street shop, $2,400 monthly rent, and the 2026-09-02 next due date; classified rent as upcoming, not overdue, on 2026-08-31.",
+          "mcp_tools": [
+            "get_rent_notice_context"
+          ],
+          "agent_tools": []
+        }
+      ],
+      "human_approvals": [
+        {
+          "kind": "rent_payment",
+          "reference": "leases.id=1",
+          "amount": 2400.0,
+          "approved_by": "Deep",
+          "paid_at": "2026-08-31",
+          "balance_before": 2560.0,
+          "balance_after": 160.0
+        }
+      ],
+      "cash_change": {
+        "amount": -2400.0,
+        "reason": "Human-approved payment of recorded rent for lease 1",
+        "balance_before": 2560.0,
+        "balance_after": 160.0
+      },
+      "remaining_review": "No landlord communication was sent."
+    },
+    {
+      "id": 103,
+      "final_status": "resolved",
+      "agent_run_status": "needs_human_review",
+      "run_id": "2e0d956c-dc68-42e7-a735-a823e4011d7c",
+      "short_outcome": "The board marks the completed run resolved, but the discount request still needs human review because no target price or discount was supplied. Eight of 20 requested size M hoodies are on hand; the 12-unit shortfall and vendor supply details remain unresolved.",
+      "agent_contributions": [
+        {
+          "role": "boss",
+          "delegated_by": null,
+          "delegated_to": [
+            "inventory",
+            "accounting",
+            "customer_service"
+          ],
+          "summary": "Checked the board, coordinated the product, accounting, and draft reviews, and returned a human-review recommendation.",
+          "mcp_tools": [
+            "list_open_tickets"
+          ],
+          "agent_tools": [
+            "delegate_to_agent"
+          ]
+        },
+        {
+          "role": "inventory",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Confirmed 8 of 20 CC-HOOD-NAVY size M on hand, leaving a shortfall of 12; did not check vendor candidates or invoice blocks.",
+          "mcp_tools": [
+            "get_bulk_discount_context"
+          ],
+          "agent_tools": []
+        },
+        {
+          "role": "accounting",
+          "delegated_by": "boss",
+          "delegated_to": [
+            "inventory"
+          ],
+          "summary": "Read ticket pricing and cash context, calculated $36 gross margin per unit at list price ($58 less $22), and found no target discount or supported discount approval. Delegated inventory implications back to Inventory.",
+          "mcp_tools": [
+            "get_bulk_discount_context",
+            "get_accounting_context"
+          ],
+          "agent_tools": [
+            "delegate_to_agent"
+          ]
+        },
+        {
+          "role": "inventory",
+          "delegated_by": "accounting",
+          "delegated_to": [],
+          "summary": "Reconfirmed 8 available against 20 requested and that stock facts alone do not determine a discount; did not check vendor details.",
+          "mcp_tools": [
+            "get_bulk_discount_context"
+          ],
+          "agent_tools": []
+        },
+        {
+          "role": "customer_service",
+          "delegated_by": "boss",
+          "delegated_to": [],
+          "summary": "Prepared an unsent acknowledgment asking for ordering details and promising no discount, quantity availability, or arrival date.",
+          "mcp_tools": [
+            "get_bulk_discount_context"
+          ],
+          "agent_tools": []
+        }
+      ],
+      "human_approvals": [],
+      "cash_change": {
+        "amount": 0.0,
+        "reason": "No target discount amount or supplier quote was recorded, so no payment or purchase was approved.",
+        "balance_before": 160.0,
+        "balance_after": 160.0
+      },
+      "remaining_review": "Provide the requested discount amount and check exact vendor fit, availability, lead time, open invoices, and a quote before considering any restock. The inventory MCP restock tool was not used."
+    }
+  ]
+}

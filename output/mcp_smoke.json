@@ -1,0 +1,102 @@
+{
+  "server": "campus-customs",
+  "connection_config": ".codex/config.toml",
+  "transport": "stdio",
+  "connection_check": {
+    "server_enabled": true,
+    "verified_with": "codex mcp list/get",
+    "command": ".venv/Scripts/python.exe",
+    "args": ["mcp_server/server.py"]
+  },
+  "tools": [
+    {
+      "prompt": "Use get_customer_order_context for ticket 101 and show the full returned values.",
+      "tool_name": "get_customer_order_context",
+      "tool_output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ticket_id\": 101,\n  \"ticket_type\": \"customer_order\",\n  \"requester\": \"Tauhid Zaman\",\n  \"subject\": \"Bulldog tee\",\n  \"sku\": \"CC-TEE-WHITE\",\n  \"size\": \"S\",\n  \"requested_qty\": 1,\n  \"ticket_status\": \"open\",\n  \"ticket_notes\": \"Needs a tee in size S.\",\n  \"stock_qty\": 0,\n  \"stock_location\": \"Aisle B\",\n  \"invoice_id\": 501,\n  \"invoice_amount\": 840.0,\n  \"invoice_due_date\": \"2026-08-28\",\n  \"invoice_status\": \"open\",\n  \"vendor_id\": 1,\n  \"vendor_name\": \"Bulldog Print Co\",\n  \"vendor_specialty\": \"apparel reprint\",\n  \"vendor_lead_days\": 5\n}"
+          }
+        ],
+        "structuredContent": {
+          "ticket_id": 101,
+          "ticket_type": "customer_order",
+          "requester": "Tauhid Zaman",
+          "subject": "Bulldog tee",
+          "sku": "CC-TEE-WHITE",
+          "size": "S",
+          "requested_qty": 1,
+          "ticket_status": "open",
+          "ticket_notes": "Needs a tee in size S.",
+          "stock_qty": 0,
+          "stock_location": "Aisle B",
+          "invoice_id": 501,
+          "invoice_amount": 840.0,
+          "invoice_due_date": "2026-08-28",
+          "invoice_status": "open",
+          "vendor_id": 1,
+          "vendor_name": "Bulldog Print Co",
+          "vendor_specialty": "apparel reprint",
+          "vendor_lead_days": 5
+        },
+        "isError": false
+      }
+    },
+    {
+      "prompt": "Use get_rent_notice_context for ticket 102 and show the full returned values.",
+      "tool_name": "get_rent_notice_context",
+      "tool_output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ticket_id\": 102,\n  \"ticket_type\": \"rent_notice\",\n  \"requester\": \"Elm City Properties\",\n  \"subject\": \"Rent due\",\n  \"ticket_status\": \"open\",\n  \"ticket_notes\": \"Email: shop rent due in 2 days.\",\n  \"lease_id\": 1,\n  \"space_name\": \"Chapel Street shop\",\n  \"landlord\": \"Elm City Properties\",\n  \"monthly_rent\": 2400.0,\n  \"next_due\": \"2026-09-02\",\n  \"lease_notes\": null\n}"
+          }
+        ],
+        "structuredContent": {
+          "ticket_id": 102,
+          "ticket_type": "rent_notice",
+          "requester": "Elm City Properties",
+          "subject": "Rent due",
+          "ticket_status": "open",
+          "ticket_notes": "Email: shop rent due in 2 days.",
+          "lease_id": 1,
+          "space_name": "Chapel Street shop",
+          "landlord": "Elm City Properties",
+          "monthly_rent": 2400.0,
+          "next_due": "2026-09-02",
+          "lease_notes": null
+        },
+        "isError": false
+      }
+    },
+    {
+      "prompt": "Use get_bulk_discount_context for ticket 103 and show the full returned values.",
+      "tool_name": "get_bulk_discount_context",
+      "tool_output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"ticket_id\": 103,\n  \"ticket_type\": \"price_override\",\n  \"requester\": \"Yale AI Club\",\n  \"subject\": \"Bulk hoodie discount\",\n  \"sku\": \"CC-HOOD-NAVY\",\n  \"size\": \"M\",\n  \"requested_qty\": 20,\n  \"ticket_status\": \"open\",\n  \"ticket_notes\": \"Student org wants 20 hoodies, size M, asking for a bulk discount.\",\n  \"stock_qty\": 8,\n  \"stock_location\": \"Aisle A\",\n  \"unit_cost\": 22.0,\n  \"list_price\": 58.0\n}"
+          }
+        ],
+        "structuredContent": {
+          "ticket_id": 103,
+          "ticket_type": "price_override",
+          "requester": "Yale AI Club",
+          "subject": "Bulk hoodie discount",
+          "sku": "CC-HOOD-NAVY",
+          "size": "M",
+          "requested_qty": 20,
+          "ticket_status": "open",
+          "ticket_notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+          "stock_qty": 8,
+          "stock_location": "Aisle A",
+          "unit_cost": 22.0,
+          "list_price": 58.0
+        },
+        "isError": false
+      }
+    }
+  ]
+}
