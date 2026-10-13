@@ -85,7 +85,7 @@ The Compose file mounts `campus-customs-state` at `/var/lib/campus-customs`. On 
 
 ### Free Render demo
 
-The repository includes a Render Blueprint for a no-cost demo. Open [Render's Blueprint deploy page](https://render.com/deploy?repo=https://github.com/drp88957/campus-customs-multi-agent-ops), connect GitHub, and set `PORTKEY_API_KEY`, `CAMPUS_CUSTOMS_ACCESS_USERNAME`, and `CAMPUS_CUSTOMS_ACCESS_PASSWORD` as private environment values when prompted. Render will build the Docker image and provide the dashboard URL when the service is ready. The free service has ephemeral storage, so the working database and audit log can reset after a restart or redeploy. Use the Docker Compose setup above or a paid host with a persistent disk if the data must survive restarts.
+The repository includes a Render Blueprint for a no-cost demo. Open [Render's Blueprint deploy page](https://render.com/deploy?repo=https://github.com/drp88957/campus-customs-multi-agent-ops), connect GitHub, and create the service. In its Environment settings, add `PORTKEY_API_KEY`, `CAMPUS_CUSTOMS_ACCESS_USERNAME`, and `CAMPUS_CUSTOMS_ACCESS_PASSWORD` as private values. Render will build the Docker image and provide the dashboard URL when the service is ready. The free service has ephemeral storage, so the working database and audit log can reset after a restart or redeploy. Use the Docker Compose setup above or a paid host with a persistent disk if the data must survive restarts.
 
 ## Submission artifacts
 
