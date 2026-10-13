@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: campus-customs-dashboard
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeployTrigger: commit
+    healthCheckPath: /health
+    envVars:
+      - key: PORTKEY_API_KEY
+        sync: false
+      - key: CAMPUS_CUSTOMS_ACCESS_USERNAME
+        sync: false
+      - key: CAMPUS_CUSTOMS_ACCESS_PASSWORD
+        sync: false
+      - key: CAMPUS_CUSTOMS_STATE_DIR
+        value: /var/lib/campus-customs
+      - key: CAMPUS_CUSTOMS_AUDIT_PATH
+        value: /var/lib/campus-customs/audit_trail.jsonl

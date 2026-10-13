@@ -83,6 +83,10 @@ docker compose up --build
 
 The Compose file mounts `campus-customs-state` at `/var/lib/campus-customs`. On first start, an empty state volume is initialized from the clean original database. Keep that volume attached across deploys so ticket resolutions, payment records, cash, and the append-only audit log persist. A hosting provider should expose the container port from its `PORT` environment variable and store all three credentials as private service secrets. The dashboard asks for the access username and password; the backend protects its read, run, approval, and reset APIs. Put only placeholders in `.env.example`; never put real credentials in the Dockerfile, source, or repository. Serve the container over HTTPS.
 
+### Free Render demo
+
+The repository includes a Render Blueprint for a no-cost demo. Open [Render's Blueprint deploy page](https://render.com/deploy?repo=https://github.com/drp88957/campus-customs-multi-agent-ops), connect GitHub, and set `PORTKEY_API_KEY`, `CAMPUS_CUSTOMS_ACCESS_USERNAME`, and `CAMPUS_CUSTOMS_ACCESS_PASSWORD` as private environment values when prompted. Render will build the Docker image and provide the dashboard URL when the service is ready. The free service has ephemeral storage, so the working database and audit log can reset after a restart or redeploy. Use the Docker Compose setup above or a paid host with a persistent disk if the data must survive restarts.
+
 ## Submission artifacts
 
 `output/` contains the table/tool/agent/API harness, ticket plans and reflections, design notes, smoke-call evidence, resolved ticket outcomes, the append-only audit trail, and the self-contained resolved board screenshot page. Screenshots also have PNG source copies in `output/board_screenshots/`. After publishing, `output/github_url.txt` records this repository's public URL.
